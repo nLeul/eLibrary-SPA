@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* eslint-disable require-jsdoc */
 /* eslint-disable strict */
 document.getElementById()
@@ -8,4 +9,11 @@ function fetchFortext() {
             document.getElementById("outlet").innerHTML = data;
 
         });
+=======
+function renderPage(template, node) {
+    node.innerHtml = template;
+}
+function fetchAboutText() {
+    fetch()
+>>>>>>> origin
 }
