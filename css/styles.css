@@ -1,0 +1,6 @@
+#navbarColor02 li {
+    border-right: 1px solid #ffffff;
+    }
+    #navbarColor02 li:last-child {
+    border-right: none
+    }
