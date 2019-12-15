@@ -4,3 +4,8 @@
     #navbarColor02 li:last-child {
     border-right: none
     }
+    footer{
+        position:fixed;
+        bottom: 0;
+        width: 100%;
+    }
