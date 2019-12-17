@@ -68,9 +68,9 @@ async function fetchBook() {
         <td>${element.publisher}</td>
         <td>${element.datePublished}</td>
         <td class="editBtn"><a onclick="editBooks(${element.bookId})" href="#.?bookId=${element.bookId}" class="btn btn-primary">Edit</a><td>
-        <td ><a href = "#" data-bookId=${element.bookId} data-title=${element.title} data-publisher=${element.publisher} data-isbn=${element.isbn} onclick=deleteConfermationPopup(event)>Delete</a></td>
+        <td ><a href = "#.?bookId=${element.bookId}" class="btn btn-danger" data-overdueFee=${element.overdueFee} data-datePublished=${element.datePublished} data-bookId=${element.bookId} data-publisher=${element.publisher} data-title=${element.title} data-isbn=${element.isbn} onclick="deleteConfermationPopup(event)">Delete</a></td>
         </tr>`
-    
+
     count++
     outlet.innerHTML = table;
   });
@@ -275,9 +275,56 @@ async function saveAdded() {
 
 }
 function deleteConfermationPopup(event) {
-  alert("hi there ");
+
+
   document.getElementById('delete_modal').style.display = 'block';
+
+
+  const bookId = event.currentTarget.dataset.bookId;
+  alert(bookId);
+  const isbn = event.currentTarget.dataset.isbn;
+  const title = event.currentTarget.dataset.title;
+  const overdueFee = event.currentTarget.dataset.overdueFee;
+  const publisher = event.currentTarget.dataset.publisher;
+  const datePublished = event.currentTarget.dataset.datePublished;
+
+
+
+
+  // document.getElementById("BOOKID").innerHTML = `BOOK ID: ${bookId}`;
+
+  document.getElementById("ISBN").innerHTML = `ISBN: ${isbn}`;
+  document.getElementById("TITLE").innerHTML = `TITLE: ${title}`;
+
+  // document.getElementById("OVERDUEFEE").innerHTML = `OVERDUE FEE: ${overdueFee}`;
+
+
+
+  document.getElementById("PUBLISHER").innerHTML = `PUBLISHER: ${publisher}`;
+
+  // document.getElementById("DATEPUBLISHED").innerHTML = `DATE PUBLISHED : ${datePublished}`;
+
+
+
+
+
+
+
 }
+function deletebook() {
+  document.getElementById('delete_modal').style.display = 'none';
+  alert("hi");
+  const parameters = new URLSearchParams(window.location.search);
+  const bookId = parameters.get("bookId")
+  alert(bookId);
+  //   fetch(`https://elibraryrestapi.herokuapp.com/elibrary/api/book/delete/${bookId}`, {
+  //     method: "DELETE"
+  // })
+}
+  // document.getElementById("deleteModalId").addEventListener("click", function () {
+  //   alert("hello");
+  //   document.getElementById('delete_modal').style.display = 'none';
+  // })
 
 // let modal = document.getElementById("exampleModal")
 // // addEventListener('click',deleteBook)
@@ -290,3 +337,7 @@ function deleteConfermationPopup(event) {
       //    data-isbn=${element.isbn} data-title=${element.title} data-overdueFee=${element.overdueFee} data-publisher=${element.publisher} >Delete</a><td></td>
 
 
+    //   fetch(`https://elibraryrestapi.herokuapp.com/elibrary/api/book/delete/${bookId}`, {
+    //     method: "DELETE"
+    // })
+    // document.getElementById('delete_modal').style.display = 'none';

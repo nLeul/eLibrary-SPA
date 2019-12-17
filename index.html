@@ -37,7 +37,7 @@
             </ul>
             <form class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="text" placeholder="Search">
-                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+                <button id="deleteModalId" class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
             </form>
         </div>
     </nav>
@@ -51,25 +51,25 @@
     </div>
 
     <!-- Modal -->
-        <div class="modal" id="delete_modal" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Confirm?</h4>
-                    </div>
-                    <div class="modal-body">
-                        <h5>Are you sure you want to delete this book?</h5><br />
-                        <span id="bookID"></span><br />
-                        <span id="isbn"></span><br />
-                        <span id="title"></span><br />
-                        <span id="overdueFee"></span><br />
-                        <span id="publisher"></span><br />
-                        <span id="datePublished"></span><br />
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                        <button class="btn btn-danger" data-dismiss="modal" onclick="deletebook()">Delete</button>
-                    </div>
+    </div>
+    <div class="modal" id="delete_modal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Confirm?</h4>
+                </div>
+                <div class="modal-body">
+                    <h5>Are you sure you want to delete this book?</h5><br />
+                    <span id="BOOKID"></span><br />
+                    <span id="ISBN"></span><br />
+                    <span id="TITLE"></span><br />
+                    <span id="OVERDUEFEE"></span><br />
+                    <span id="PUBLISHER"></span><br />
+                    <span id="DATEPUBLISHED"></span><br />
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="deleteModalId" class="btn btn-danger" data-dismiss="modal" onclick="deletebook()">Delete</button >
                 </div>
             </div>
         </div>
