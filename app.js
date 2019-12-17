@@ -273,7 +273,7 @@ aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-info" data-dismiss="modal">No</button>
-            <input type="" id="bookId">
+            <input type="hidden" id="bookId">
             <button deleteBook(bookId) id="deleteModalBtnYes" data-dismiss="modal" type="button" class="btn btn-danger">delete</button>
         </div>
     </div>
@@ -283,30 +283,24 @@ aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 function deleteBook(bookId) {
   outlet.innerHTML = modalView + table;
 
-    $("#confirmDeleteBookModal").on("show.bs.modal", function (event) {
-     
-      bookId = $(event.relatedTarget).data("bookId");
-      
-        const bookISBN =  $(event.relatedTarget).data("isbn");
-        const bookTitle =  $(event.relatedTarget).data("title");
-     
-        $(this).find("#deleteModalBookISBN").text("ISBN:" + bookISBN);
-        $(this).find("#deleteModalBookTitle").text("Book Title: " + bookTitle);
-        alert(bookId)
-        $("#deleteModalBtnYes").on("click", async function () {
+  $("#confirmDeleteBookModal").on("show.bs.modal", function (event) {
 
-            await fetch(`https://elibraryrestapi.herokuapp.com/elibrary/api/book/delete/${bookId}`,
-                {
-                    method: "delete"
-                })
+    bookId = $(event.relatedTarget).data("bookId");
 
-            // alert(" delete sucessfull");
-            // $("#confirmDeleteBookModal").modal("hide");
-            // //location.reload()
-            // bookslist()
-            fetchBook()
-        
+    const bookISBN = $(event.relatedTarget).data("isbn");
+    const bookTitle = $(event.relatedTarget).data("title");
+
+    $(this).find("#deleteModalBookISBN").text("ISBN:" + bookISBN);
+    $(this).find("#deleteModalBookTitle").text("Book Title: " + bookTitle);
+
+    $("#deleteModalBtnYes").on("click", async function () {
+
+      await fetch(`https://elibraryrestapi.herokuapp.com/elibrary/api/book/delete/${bookId}`,
+        {
+          method: "delete"
         })
+      fetchBook()
     })
+  })
 
 }
