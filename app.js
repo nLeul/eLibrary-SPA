@@ -32,12 +32,12 @@ function fetchVirtualTour() {
 
 const booksNode = document.getElementById('booksID');
 booksNode.addEventListener('click', fetchBook);
-
+let table = '';
 async function fetchBook() {
   const resp = await fetch("https://elibraryrestapi.herokuapp.com/elibrary/api/book/list");
   const data = await resp.json();
 
-  let table = ` 
+  table = ` 
     <div class="row">
     <div class="col"><h3>Our Book Collection</h3></div>
     </div>
@@ -67,25 +67,17 @@ async function fetchBook() {
         <td>${element.overdueFee}</td>
         <td>${element.publisher}</td>
         <td>${element.datePublished}</td>
-        <td class="editBtn"><a onclick="editBooks(${element.bookId})" href="#.?bookId=${element.bookId}" class="btn btn-primary">Edit</a><td>
-        <td ><a href = "#.?bookId=${element.bookId}" class="btn btn-danger" data-overdueFee=${element.overdueFee} data-datePublished=${element.datePublished} data-bookId=${element.bookId} data-publisher=${element.publisher} data-title=${element.title} data-isbn=${element.isbn} onclick="deleteConfermationPopup(event)">Delete</a></td>
+        <td class="editBtn"><a  onclick="editBooks(${element.bookId})" href="#.?bookId=${element.bookId}" class="btn btn-primary">Edit</a><td>
+        <td ><a data-toggle="modal" onclick="deleteBook(${element.bookId})" href="#confirmDeleteBookModal" data-bookId=${element.bookId} 
+          data-title=${element.title} data-isbn=${element.isbn}" class="btn btn-primary">Delete</a><td>
         </tr>`
-
     count++
     outlet.innerHTML = table;
   });
-  // let buttons = document.querySelectorAll('.editBtn');
-  // buttons.forEach(button => {
-  //   button.addEventListener('click', editBooks);
-  // })
 
   let delButtons = document.querySelectorAll('.deleteBtn');
-  // delButtons.forEach(button => {
-  //   button.addEventListener('click', deleteBook);
-  // })
-  // document.querySelector("#addbookId").addEventListener("click", editBooks)
   document.querySelector("#addbookId").addEventListener("click", addBooks)
-  // "data-bookid= ${element.bookId} href="#.?bookId=${element.bookId}"
+
 
 }
 
@@ -182,16 +174,14 @@ let addBook = `  <div class="container">
 <input id="saveBook" onclick='saveAdded()' type="button" class="btn btn-primary" value="save">
     
 </div>`
+
+
+
 // edit books
 
 async function editBooks(bookId) {
 
   outlet.innerHTML = editBook;
-
-  // let bookID = event.currentTarget.dataset.bookId;
-  // alert(bookID);
-  // const parameters = new URLSearchParams(window.location.search);
-  // const bookId = parameters.get("bookId")
   alert(bookId);
   // editBookAdded(event);
   let bookJson = await fetch(`https://elibraryrestapi.herokuapp.com/elibrary/api/book/get/${bookId}`);
@@ -208,15 +198,7 @@ async function editBooks(bookId) {
 
 async function editBookAdded() {
 
-  // let bookID = event.currentTarget.dataset.bookId;
-  // e.preventDefault();
 
-  // console.log(bookID);
-
-  // console.log(bookId);
-  // alert(bookID)
-  // alert(bookID);
-  // 
   const bookId = document.querySelector('#bookId').value
   const data = {
     "isbn": document.querySelector("#isbn").value,
@@ -271,73 +253,60 @@ async function saveAdded() {
 
   alert("post succesful");
 
+}
 
+let modalView = `<div class="modal fade" id="confirmDeleteBookModal" tabindex="-1" role="dialog"
+aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalCenterTitle">Confirm Delete</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p><b>Are you sure you wish to delete this book?</b></p>
+            <br />
+            <p id="deleteModalBookISBN"></p>
+            <p id="deleteModalBookTitle"></p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" data-dismiss="modal">No</button>
+            <input type="" id="bookId">
+            <button deleteBook(bookId) id="deleteModalBtnYes" data-dismiss="modal" type="button" class="btn btn-danger">delete</button>
+        </div>
+    </div>
+</div>
+</div>`
+
+function deleteBook(bookId) {
+  outlet.innerHTML = modalView + table;
+
+    $("#confirmDeleteBookModal").on("show.bs.modal", function (event) {
+     
+      bookId = $(event.relatedTarget).data("bookId");
+      
+        const bookISBN =  $(event.relatedTarget).data("isbn");
+        const bookTitle =  $(event.relatedTarget).data("title");
+     
+        $(this).find("#deleteModalBookISBN").text("ISBN:" + bookISBN);
+        $(this).find("#deleteModalBookTitle").text("Book Title: " + bookTitle);
+        alert(bookId)
+        $("#deleteModalBtnYes").on("click", async function () {
+
+            await fetch(`https://elibraryrestapi.herokuapp.com/elibrary/api/book/delete/${bookId}`,
+                {
+                    method: "delete"
+                })
+
+            // alert(" delete sucessfull");
+            // $("#confirmDeleteBookModal").modal("hide");
+            // //location.reload()
+            // bookslist()
+            fetchBook()
+        
+        })
+    })
 
 }
-function deleteConfermationPopup(event) {
-
-
-  document.getElementById('delete_modal').style.display = 'block';
-
-
-  const bookId = event.currentTarget.dataset.bookId;
-  alert(bookId);
-  const isbn = event.currentTarget.dataset.isbn;
-  const title = event.currentTarget.dataset.title;
-  const overdueFee = event.currentTarget.dataset.overdueFee;
-  const publisher = event.currentTarget.dataset.publisher;
-  const datePublished = event.currentTarget.dataset.datePublished;
-
-
-
-
-  // document.getElementById("BOOKID").innerHTML = `BOOK ID: ${bookId}`;
-
-  document.getElementById("ISBN").innerHTML = `ISBN: ${isbn}`;
-  document.getElementById("TITLE").innerHTML = `TITLE: ${title}`;
-
-  // document.getElementById("OVERDUEFEE").innerHTML = `OVERDUE FEE: ${overdueFee}`;
-
-
-
-  document.getElementById("PUBLISHER").innerHTML = `PUBLISHER: ${publisher}`;
-
-  // document.getElementById("DATEPUBLISHED").innerHTML = `DATE PUBLISHED : ${datePublished}`;
-
-
-
-
-
-
-
-}
-function deletebook() {
-  document.getElementById('delete_modal').style.display = 'none';
-  alert("hi");
-  const parameters = new URLSearchParams(window.location.search);
-  const bookId = parameters.get("bookId")
-  alert(bookId);
-  //   fetch(`https://elibraryrestapi.herokuapp.com/elibrary/api/book/delete/${bookId}`, {
-  //     method: "DELETE"
-  // })
-}
-  // document.getElementById("deleteModalId").addEventListener("click", function () {
-  //   alert("hello");
-  //   document.getElementById('delete_modal').style.display = 'none';
-  // })
-
-// let modal = document.getElementById("exampleModal")
-// // addEventListener('click',deleteBook)
-// function deleteBook() {
-//   outlet.innerHTML = modal;
-//   alert("delete")
-// }
-
-// <td class="deleteBtn"><a href="#Modal" data-target="#exampleModal" onclick="deleteBook()" class="btn btn-primary" data-toggle="modal" data-bookid=${element.bookId}
-      //    data-isbn=${element.isbn} data-title=${element.title} data-overdueFee=${element.overdueFee} data-publisher=${element.publisher} >Delete</a><td></td>
-
-
-    //   fetch(`https://elibraryrestapi.herokuapp.com/elibrary/api/book/delete/${bookId}`, {
-    //     method: "DELETE"
-    // })
-    // document.getElementById('delete_modal').style.display = 'none';
