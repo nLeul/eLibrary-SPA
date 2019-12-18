@@ -1,14 +1,12 @@
-The purpose of lorem ipsum is to create a natural looking block of text
-            (sentence, paragraph, page, etc.) that doesn't distract from the layout. <br />
-            A practice not without controversy, laying out pages with meaningless
-            filler text can be very useful when the focus is meant to be on design, not content.
-           
-            The eLibrary® database has been completely re-imagined, with a redesigned experience that 
+            
+             <p>The purpose of lorem ipsum is to create a natural looking block of text(sentence, paragraph, page, etc.) that doesn't
+              distract from the layout.A practice not without controversy, laying out pages with meaningless
+            filler text can be very useful when the focus is meant to be on design, not content.The eLibrary® database has been completely re-imagined, with a redesigned experience that 
             more efficiently guides novice researchers to identify their research topic and find authoritative 
             information to support their research claim. Presented on the award-winning ProQuest platform, eLibrary 
             offers two methods of access: a custom Guided Research application, and as part of the unified platform, 
             assuring fit-for-purpose use. The responsively-designed user interface offers access on any device at any time. 
-            and, users can cross-search eLibrary with other ProQuest databases, improving your library’s return-on-investment.
+            and, users can cross-search eLibrary with other ProQuest databases, improving your library’s return-on-investment.</p>
 
 
             eLibrary®—the user-friendly general reference tool—delivers one of the largest general reference collections of periodical and 

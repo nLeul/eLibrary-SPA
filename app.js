@@ -3,12 +3,20 @@ const aboutNode = document.getElementById('aboutID');
 aboutNode.addEventListener('click', fetchAboutText);
 const outlet = document.getElementById("outlet");
 
+let addDisplay = `<h2><span id="pbtdisplay" class="btn btn-success" 
+style="display: none; margin-left: 400px; margin-right: 400px;" >Book added Successfully</span> </h2>`
+
+
 function fetchAboutText() {
+
+  let myHeader = `<h5>About us</h5>`
+  let image = `<img width="1100" height="250"src="./image/topicals.png" alt="library virtual tour" ">`
   fetch('./text/About.txt')
     .then(res => res.text())
     .then(data => {
-      console.log(data);
-      outlet.innerHTML = data;
+
+      outlet.innerHTML = `${myHeader}${image}${data}`;
+
 
     })
 }
@@ -21,23 +29,29 @@ function fetchVirtualTour() {
   fetch('./text/VirtualTour.txt')
     .then(res => res.text())
     .then(data => {
-      console.log(data);
+
       outlet.innerHTML = `${image}${data}`;
+
 
     })
 }
 
 
 // fetch book
-
+let myBook = [];
 const booksNode = document.getElementById('booksID');
 booksNode.addEventListener('click', fetchBook);
 let table = '';
 async function fetchBook() {
   const resp = await fetch("https://elibraryrestapi.herokuapp.com/elibrary/api/book/list");
   const data = await resp.json();
-
+  tabeleDraw(data)
+}
+function tabeleDraw(data) {
+  myBook.push(data);
   table = ` 
+  <h2><span id="deleteDisp" class="btn btn-success" 
+style="display: none; margin-left: 400px; margin-right: 400px;" >DELETED Successfully</span> </h2>
     <div class="row">
     <div class="col"><h3>Our Book Collection</h3></div>
     </div>
@@ -68,8 +82,8 @@ async function fetchBook() {
         <td>${element.publisher}</td>
         <td>${element.datePublished}</td>
         <td class="editBtn"><a  onclick="editBooks(${element.bookId})" href="#.?bookId=${element.bookId}" class="btn btn-primary">Edit</a><td>
-        <td ><a data-toggle="modal" onclick="deleteBook(${element.bookId})" href="#confirmDeleteBookModal" data-bookId=${element.bookId} 
-          data-title=${element.title} data-isbn=${element.isbn}" class="btn btn-primary">Delete</a><td>
+        <td ><a data-toggle="modal" onclick="deleteBook(${element.bookId})" href="#confirmDeleteBookModal" data-bookid=${element.bookId} 
+          data-title=${element.title} data-isbn=${element.isbn} class="btn btn-danger">Delete</a><td>
         </tr>`
     count++
     outlet.innerHTML = table;
@@ -80,27 +94,33 @@ async function fetchBook() {
 
 
 }
+console.log(myBook)
+
 
 //set index page 
 
-const indexPage = document.querySelector('.navbar-brand');
+const indexPage = document.querySelector('#indexPage');
 indexPage.addEventListener('click', fetchIndex);
 
 function fetchIndex() {
   let image = `<img src="./image/banner1.png" alt="library banner" >`
+  let topTitle = ` <h4>Welcome to the eLibrary®</h4>`
   fetch('./text/Indext.txt')
     .then(res => res.text())
     .then(data => {
-      console.log(data);
-      outlet.innerHTML = `${image}${data}`;
+
+      outlet.innerHTML = ` ${topTitle}${image}${data}`;
+
 
     })
 }
-fetchIndex();
+// fetchIndex();
 
 // edit book page template 
 let editBook = `  <div class="container">
 <h3>Edit Book </h3>
+<h2><span id="updateDisp" class="btn btn-success" 
+style="display: none; margin-left: 400px; margin-right: 400px;" >Updated Successfully</span> </h2>
 <form>
   <fieldset>
   <div class="form-group">
@@ -133,7 +153,7 @@ let editBook = `  <div class="container">
 </div>
 </fieldset>
 <div id="button" style="margin-left: 1020px;">
-<input id="saveBook" onclick="editBookAdded()" type="button" class="btn btn-primary" value="Edit Book">
+<input id="saveBook" onclick="editBookAdded()" type="button" class="btn btn-primary" value="UpdateBook">
     
 </div>`
 
@@ -182,8 +202,8 @@ let addBook = `  <div class="container">
 async function editBooks(bookId) {
 
   outlet.innerHTML = editBook;
-  alert(bookId);
-  // editBookAdded(event);
+
+
   let bookJson = await fetch(`https://elibraryrestapi.herokuapp.com/elibrary/api/book/get/${bookId}`);
   let books = await bookJson.json();
   document.querySelector('#bookId').value = `${books.bookId}`;
@@ -192,7 +212,7 @@ async function editBooks(bookId) {
   document.querySelector('#publisherid').value = `${books.publisher}`;
   document.querySelector('#overdueFeeid').value = `${books.overdueFee}`;
   document.querySelector('#datePublishedid').value = `${books.datePublished}`;
-  // editBookAdded()
+
   document.querySelector('#saveBook').addEventListener('click', editBookAdded)
 }
 
@@ -216,10 +236,10 @@ async function editBookAdded() {
     body: JSON.stringify(data)
   });
   const json = await response.json();
-
-
-  alert("edit succesful");
-
+  document.querySelector("#updateDisp").style.display = 'block';
+  setTimeout(() => {
+    fetchBook();
+  }, 3000)
 
 }
 
@@ -230,7 +250,7 @@ async function editBookAdded() {
 const url = `https://elibraryrestapi.herokuapp.com/elibrary/api/book/add`;
 
 function addBooks() {
-  outlet.innerHTML = addBook;
+  outlet.innerHTML = addDisplay + addBook;
 }
 async function saveAdded() {
   const data = {
@@ -240,7 +260,7 @@ async function saveAdded() {
     "publisher": document.querySelector("#publisherid").value,
     "datePublished": document.querySelector("#datePublishedid").value
   };
-  console.log(data)
+
   const response = await fetch(`https://elibraryrestapi.herokuapp.com/elibrary/api/book/add`, {
     method: 'POST',
     headers: {
@@ -251,7 +271,12 @@ async function saveAdded() {
   const json = await response.json();
 
 
-  alert("post succesful");
+  setTimeout(_ => {
+    let addBookDis = document.querySelector('#pbtdisplay')
+    addBookDis.style.display = 'block';
+
+  })
+  fetchBook() // alert("post succesful");
 
 }
 
@@ -283,24 +308,46 @@ aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 function deleteBook(bookId) {
   outlet.innerHTML = modalView + table;
 
+
   $("#confirmDeleteBookModal").on("show.bs.modal", function (event) {
 
-    bookId = $(event.relatedTarget).data("bookId");
+    const bookId = $(event.relatedTarget).data("bookid");
 
     const bookISBN = $(event.relatedTarget).data("isbn");
     const bookTitle = $(event.relatedTarget).data("title");
 
-    $(this).find("#deleteModalBookISBN").text("ISBN:" + bookISBN);
-    $(this).find("#deleteModalBookTitle").text("Book Title: " + bookTitle);
+    $(this).find(".modal-body #deleteModalBookISBN").text("ISBN:" + bookISBN);
+    $(this).find(".modal-body #deleteModalBookTitle").text("Book Title: " + bookTitle);
 
-    $("#deleteModalBtnYes").on("click", async function () {
+    $("#deleteModalBtnYes").click(async function () {
 
       await fetch(`https://elibraryrestapi.herokuapp.com/elibrary/api/book/delete/${bookId}`,
         {
-          method: "delete"
+          method: "DELETE"
         })
-      fetchBook()
+      document.querySelector("#deleteDisp").style.display = 'block';
+      setTimeout(() => {
+        fetchBook();
+      }, 3000)
+
     })
   })
 
+}
+
+
+document.querySelector('#searchID').addEventListener("click", searchWithTitle);
+
+function searchWithTitle() {
+
+  let resultBook = [];
+  let bookTitle = document.querySelector('#searchValue').value;
+  for (let book of myBook) {
+    if (book.title === bookTitle) {
+      resultBook.push(book.title);
+
+    }
+  }
+  console.log(resultBook)
+  // tabeleDraw(resultBook);
 }
