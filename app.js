@@ -1,11 +1,11 @@
-const index = `<img src="image/banner1.png" alt="panoramic" >`
-const virtual = `<img src="image/panoramic.png" alt="panoramic" >`
+const index = `<img src="image/Home.jpg" height="550" width="1100"alt="panoramic" >`
+const virtual = `<img src="image/original.jpg" height="550" width="1100" alt="panoramic" >`
 let mytable = `<h3>Books in our Collection </h3>
-<span id="btdisplay" class="btn btn-success" style="display: none; margin-left: 400px; margin-right: 400px;" >Book deleted Successfully</span>
-<a type="button" onclick= "addbook()" id="addbooks" class="btn btn-outline-success" style="float:right;">Add Books</a>
-`
+                <a type="button" onclick= "addbook()" id="addbooks" class="btn btn-outline-success" style="float:right;">Add Books</a>
+                `
+let aboutimage= `<img src="image/index.jpg" height="550" width="1100" alt="panoramic" >`
 let newbook = `<h2>New Book Form <span id="pbtdisplay" class="btn btn-success" style="display: none; margin-left: 400px; margin-right: 400px;" >Book added Successfully</span> </h2>
-`
+                `
 let editbook = `<h2>Editing Book Form <span id="editeddisplay" class="btn btn-success" style="display: none; margin-left: 400px; margin-right: 400px;" >Book updated Successfully</span></h2>`
 let addbooks = `
 <form onsubmit="postbook(event)">
@@ -55,19 +55,52 @@ let addbooks = `
             </div>
 </form>
 `
+// global declaration for div outlet
 const outlet = document.getElementById("outlet");
-
+// window popstate for virtual,about,books and index pages
+window.addEventListener('popstate', function(event){
+    if(history.state==="virtual")
+    virtualPage();
+    else if(history.state==="about")
+    aboutPage();
+    else if(history.state==="books")
+    fetchbook();
+    else if(history.state==="index")
+    msdPage();
+    
+})
+/**
+     * Function to display aboutPage from the image and feteched text from localstorage
+     * 
+     * @param {ImageData} image image of object to display
+     * @param {String} stringify a fetch text pharagraph 
+     * @param {state} state push history state for aboutPage listening the event
+     * 
+     */
 function aboutPage() {
 
     fetch("text/About.txt")
         .then((reponse) => reponse.text())
         .then((data) => {
-            outlet.innerHTML = data;
+            outlet.innerHTML = aboutimage + data;
         })
 };
+document.getElementById("aboutID").addEventListener("click",function(){
+    history.pushState("about","","?about")
+    aboutPage()
+    event.preventDefault()
+})
 const about = document.getElementById("aboutID");
 about.addEventListener("click", aboutPage)
 
+/**
+     * Function to display virtualPage from the image and feteched text from localstorage
+     * 
+     * @param {ImageData} image image of object to display
+     * @param {String} stringify a fetch text pharagraph 
+     * @param {state} state push history state for virtualPage listening the event
+     * 
+     */
 function virtualPage() {
 
     fetch("text/VirtualTour.txt")
@@ -79,6 +112,20 @@ function virtualPage() {
 const virtualbtn = document.getElementById("virtualID");
 virtualbtn.addEventListener("click", virtualPage)
 
+document.getElementById("virtualID").addEventListener("click",function(){
+    history.pushState("virtual","","?virtual")
+    virtualPage()
+    event.preventDefault()
+})
+
+/**
+     * Function to display msdPage from the image and feteched text from localstorage
+     * 
+     * @param {ImageData} image image of object to display
+     * @param {String} stringify a fetch text pharagraph 
+     * @param {state} state push history state for virtualPage listening the event
+     * 
+     */
 msdPage()
 function msdPage() {
     fetch("text/Indext.txt")
@@ -87,16 +134,36 @@ function msdPage() {
             outlet.innerHTML = index + data;
         })
 };
-
-
 const indexbtn = document.getElementById("indexID");
 indexbtn.addEventListener("click", msdPage)
 
-let output = "";
+document.getElementById("indexID").addEventListener("click",function(){
+    history.pushState("index","","?index")
+    msdPage()
+    event.preventDefault()
+})
 
-function getbook() {
+/**
+     * Function to fetch books from the given url
+     * 
+     * @param {Object} element clicked html element
+     *  @param {state} state push history state for fetchbook listening the event
+     */
+function fetchbook() {
+    fetch("https://elibraryrestapi.herokuapp.com/elibrary/api/book/list")
+        .then((resp) => resp.json())
+        .then((data) => {
+            getbook(data)
+        })
+}
+
+let output = "";
+function getbook(arr) {
+    
     output =
-        `<table class="table table-hover">
+        `<span id="btdisplay" class="btn btn-success" style="display: none; margin-left: 400px; margin-right: 400px;" >
+        Book deleted Successfully</span>
+        <table class="table table-hover">
    <thead>
         <tr>
             <th scope="col">#</th>
@@ -108,13 +175,8 @@ function getbook() {
         </tr>
     </thead>
     `
-
-    fetch("https://elibraryrestapi.herokuapp.com/elibrary/api/book/list")
-        .then((resp) => resp.json())
-        .then((data) => {
-
-            data.forEach(element => {
-                output += `<tr>
+    arr.forEach((element) => {
+        output += `<tr>
     <td scope="col">${element.bookId}</td>
     <td scope="col"> ${element.isbn}</td>
     <td scope="col">${element.title}</td>
@@ -123,27 +185,32 @@ function getbook() {
     <td scope="col">${element.datePublished}</td>
     <td scope="col"><a href="# ?bookId=${element.bookId}" onclick="edittokenbook(${element.bookId})">Edit</a></th>
     <td><a data-toggle="modal" data-bookid="${element.bookId}" data-bookisbn="${element.isbn}" 
-    data-booktitle="${element.title}" href="#confirmDeleteBookModal">Delete</a></td>
+    data-booktitle="${element.title}" href="#confirmDeleteBookModal" onclick="deletebook(${element.bookId})">Delete</a></td>
               </tr>`
-            })
-            outlet.innerHTML = mytable + output;
-        });
+    })
+    outlet.innerHTML = mytable + output;
+
 }
+
 const bookbtn = document.getElementById("booksID");
-bookbtn.addEventListener("click", getbook)
+bookbtn.addEventListener("click", fetchbook)
 
+document.getElementById("booksID").addEventListener("click",function(){
+    history.pushState("books","","?books")
+    fetchbook()
+    event.preventDefault()
+})
 
-
+/**
+     * Function to add books to the given url
+     * 
+     * @param {Object} element clicked to display html element
+     *  @param {state} state push history state for addbook listening the event
+     */
 function addbook() {
 
     outlet.innerHTML = newbook + addbooks;
 };
-// function editbooks() {
-//     //edittokenbook()
-//     outlet.innerHTML = editbook + addeditbooks;
-
-// //<input id="bookId" type="hidden">
-// };
 
 let addeditbooks = `
 <form onsubmit="postedited(event)">
@@ -186,7 +253,7 @@ let addeditbooks = `
                         <button type="reset" class="btn btn-success">Reset</button>
                     </div>
                     <div class="btn-group" role="group" aria-label="Third group">
-                        <input type="" id="bookId">
+                        <input type="hidden" id="bookId">
                         <button type="submit"  id="editsave" class="btn btn-primary">Save Book</button>
                     </div>
                 </span>
@@ -194,8 +261,14 @@ let addeditbooks = `
             </div>
 </form>            
 `
+/**
+     * Function to add books to the given url
+     * 
+     * @param {Object} element clicked to post an object element
+     *  @param {state} state push history state for postbook listening the event
+     */
 async function postbook(event) {
-event.preventDefault();
+    event.preventDefault();
     let Title = document.getElementById("title").value;
     let IsBn = document.getElementById("isbn").value;
     let publisher = document.getElementById("publisher").value;
@@ -220,14 +293,14 @@ event.preventDefault();
     let dis = document.getElementById("pbtdisplay");
     dis.style.display = "block";
     setTimeout(_ => {
-       getbook() 
+        fetchbook()
     }, 2000)
-   
+
 };
 
 async function edittokenbook(bookId) {
     outlet.innerHTML = editbook + addeditbooks
-    console.log(bookId);
+    //console.log(bookId);
     const resp = await fetch(`https://elibraryrestapi.herokuapp.com/elibrary/api/book/get/${bookId}`)
     const respBody = await resp.json();
 
@@ -240,6 +313,12 @@ async function edittokenbook(bookId) {
 
 };
 
+/**
+     * Function to edit books to the given url
+     * 
+     * @param {Object} element clicked to edit an object element
+     *  @param {state} state push history state for postbook listening the event
+     */
 async function postedited(event) {
     event.preventDefault();
 
@@ -266,11 +345,11 @@ async function postedited(event) {
     let displ = document.getElementById("editeddisplay");
     displ.style.display = "block";
     setTimeout(_ => {
-        getbook()
-    }, 2000) 
+        fetchbook()
+    }, 2000)
 };
 
-let modal=` <div class="modal fade" id="confirmDeleteBookModal" tabindex="-1" role="dialog"
+let modal = ` <div class="modal fade" id="confirmDeleteBookModal" tabindex="-1" role="dialog"
 aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -288,18 +367,63 @@ aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-            <button id="deleteModalBtnYes" type="button" data-dismiss="modal"
-                class="btn btn-primary">Yes</button>
+            <input type="hidden" id="bookId">
+            <button id="deleteModalBtnYes" onclick="deletebook(bookId)" type="button" data-dismiss="modal" class="btn btn-primary">Yes</button>
         </div>
     </div>
 </div>
 </div>`
 
-function deletebook(){
-    let bookId = document.getElementById("bookId").value;
-    let Title = document.getElementById("title").value;
-    let IsBn = document.getElementById("isbn").value; 
+/**
+     * Function to delete books to the given url
+     * 
+     * @param {Object} element clicked to delete an object element
+     *  @param {state} state push history state for postbook listening the event
+     */
+function deletebook(bookId) {
+    //let displydelete = document.getElementById("confirmDeleteBookModal")
+    outlet.innerHTML = modal + mytable + output;
+    $('#confirmDeleteBookModal').on('show.bs.modal', function (event) {
+        bookId = $(event.relatedTarget).data('bookid');
+        //alert(bookId)
+        let isbn = $(event.relatedTarget).data('bookisbn');
+        let title = $(event.relatedTarget).data('booktitle');
+        $(this).find('.modal-body #isbn').text("Isbn: " + isbn);
+        $(this).find('.modal-body #title').text("Book title: " + title);
+        $('#deleteModalBtnYes').click(async function () {
+            await fetch(`https://elibraryrestapi.herokuapp.com/elibrary/api/book/delete/${bookId}`, {
+                method: "delete"
+
+            })
+            let disp = document.getElementById("btdisplay");
+            disp.style.display = "block";
+            setTimeout(_ => {
+                fetchbook()
+            }, 2000)
+            disp.style.display = "block";
+        })
+    })
+
 }
-
-
-
+/**
+     * Function to search objects from the array that the selected property first character is in the pattern
+     * 
+     * @param {Array} arr arry of objects to search from
+     * @param {String} searchBy a property of an object to search with
+     * @param {String} pattern a string value to match with property of the object
+     */
+async function searchbook(ob) {
+    let bookval = document.getElementById("searchId");
+   // console.log(bookval)
+    let resp = await fetch(`https://elibraryrestapi.herokuapp.com/elibrary/api/book/list`)
+    let result = await resp.json();
+   // console.log(result)
+    let arr = [];
+    for (let item of result) {
+        if (item.title.includes(bookval.value)) {
+            arr.push(item)
+        }
+    }
+    console.log(arr);
+    getbook(arr)
+}
