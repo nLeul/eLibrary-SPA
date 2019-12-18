@@ -1,21 +1,34 @@
- document.getElementById('aboutID').addEventListener('click',
+
+/**
+ * listener for loading About page and push state to history 
+ */
+document.getElementById('aboutID').addEventListener('click',
   function (event) {
     history.pushState('fetchAboutText', 'null', '/About')
     event.preventDefault()
     fetchAboutText()
-   
+
   }
 );
+/**
+ * the main div to render everything
+ */
 const outlet = document.getElementById("outlet");
 
+/**
+ * add a book succesful notification 
+ */
 let addDisplay = `<h2><span id="pbtdisplay" class="btn btn-success" 
 style="display: none; margin-left: 400px; margin-right: 400px;" >Book added Successfully</span> </h2>`
 
 
+/**
+ * fetch about page from the server using Fetch API and set the page to About 
+ */
 function fetchAboutText() {
 
   let myHeader = `<h5>About us</h5>`
-  let image = `<img width="1100" height="250"src="./image/topicals.png" alt="library virtual tour" ">`
+  let image = `<img class="rounded mx-auto d-block"  width="1000" height="450" src="./image/topicals.png" alt="library virtual tour" ">`
   fetch('./text/About.txt')
     .then(res => res.text())
     .then(data => {
@@ -25,18 +38,24 @@ function fetchAboutText() {
 
     })
 }
- document.getElementById('virtualID').addEventListener('click',
+/**
+ * lsitener for loading virtual tour page and push state
+ */
+document.getElementById('virtualID').addEventListener('click',
   function (event) {
     history.pushState('fetchVirtualTour', '', '/Virtual Tour')
     fetchVirtualTour();
     event.preventDefault();
-    
-  
+
+
   }
 );
 
+/**
+ * fetch Virtual Tour page using Fetch API
+ */
 function fetchVirtualTour() {
-  let image = `<img src="./image/panoramic.png" alt="library virtual tour" ">`
+  let image = `<img class="rounded mx-auto d-block" src="./image/panoramic.png"  width="1000" height="450" alt="library virtual tour" ">`
   fetch('./text/VirtualTour.txt')
     .then(res => res.text())
     .then(data => {
@@ -47,8 +66,9 @@ function fetchVirtualTour() {
     })
 }
 
-
-// fetch book
+/**
+ * listener to fetch the books and set the books home page  and push state
+ */
 let myBook = [];
 document.getElementById('booksID').addEventListener('click',
   function (event) {
@@ -57,12 +77,21 @@ document.getElementById('booksID').addEventListener('click',
     event.preventDefault();
   }
 );
+
+/**
+ * fetch the books Using fetch API using the book list endpoint asynchronously 
+ */
 let table = '';
 async function fetchBook() {
   const resp = await fetch("https://elibraryrestapi.herokuapp.com/elibrary/api/book/list");
   const data = await resp.json();
   tabeleDraw(data)
 }
+
+/**
+ * function to draw the table data into the books page 
+ * @param {object} data an array object that holds all the books
+ */
 function tabeleDraw(data) {
   myBook = data;
   table = ` 
@@ -75,7 +104,7 @@ style="display: none; margin-left: 400px; margin-right: 400px;" >DELETED Success
     <div class="col"></div>
     <div class="col"></div>
     <div class="col"></div>
-    <div class="col"> <button style="margin-left:1000px;" id="addbookId"class="btn btn-primary">Add Book</button></div>
+    <div class="col"> <button style="float: right;" id="addbookId"class="btn btn-primary">Add Book</button></div>
     <table class="table table-hover">
     <thead>
     <tr>
@@ -110,16 +139,20 @@ style="display: none; margin-left: 400px; margin-right: 400px;" >DELETED Success
 
 
 }
-console.log(myBook)
 
-
-//set index page 
+/**
+ * lsitener to the render the index home page into the oulet 
+ */
 
 const indexPage = document.querySelector('#indexPage');
 indexPage.addEventListener('click', fetchIndex);
 
+/**
+ * fetch the index page and image using FETCH api
+ */
 function fetchIndex() {
-  let image = `<img src="./image/banner1.png" alt="library banner" >`
+  let image = `
+  <div class="container"><img class="rounded mx-auto d-block" width="1000" height="450" src="./image/lib.jpg" alt="library banner" ></div>`
   let topTitle = ` <h4>Welcome to the eLibrary®</h4>`
   fetch('./text/Indext.txt')
     .then(res => res.text())
@@ -132,7 +165,9 @@ function fetchIndex() {
 }
 fetchIndex();
 
-// edit book page template 
+/**
+ * edit book form template 
+ */
 let editBook = `  <div class="container">
 <h3>Edit Book </h3>
 <h2><span id="updateDisp" class="btn btn-success" 
@@ -169,12 +204,14 @@ style="display: none; margin-left: 400px; margin-right: 400px;" >Updated Success
 </div>
 </fieldset>
 <div id="button" style="margin-left: 1020px;">
-<input id="saveBook" onclick="editBookAdded()" type="button" class="btn btn-primary" value="Update Book">
+<input id="saveBook" style="float: right;" onclick="editBookAdded()" type="button" class="btn btn-primary" value="Update Book">
     
 </div>`
 
 
-// add book page template 
+/**
+ * add book page template 
+ */
 let addBook = `  <div class="container">
 <h3>Add Book </h3>
 <form>
@@ -205,15 +242,16 @@ let addBook = `  <div class="container">
       </div>
     </div>
 </div>
-</fieldset>
+</fieldset><br><br>
 <div id="button" style="margin-left: 1020px;">
-<input id="saveBook" onclick='saveAdded()' type="button" class="btn btn-primary" value="Add Book">
+<input id="saveBook" style="float: right;"  onclick='saveAdded()' type="button" class="btn btn-primary" value="Add Book">
     
 </div>`
 
-
-
-// edit books
+/**
+ * fetch the book to be edited asynchronously 
+ * @param {*} bookId book Id to fetch the input for the edit page form values
+ */
 
 async function editBooks(bookId) {
 
@@ -231,6 +269,10 @@ async function editBooks(bookId) {
 
   document.querySelector('#saveBook').addEventListener('click', editBookAdded)
 }
+
+/**
+ * PUT the edited book back in to the form using FETCH API asynchronously using async await 
+ */
 
 async function editBookAdded() {
 
@@ -260,7 +302,9 @@ async function editBookAdded() {
 }
 
 
-//add book
+/**
+ * add a new book from the endpoint 
+ */
 
 
 const url = `https://elibraryrestapi.herokuapp.com/elibrary/api/book/add`;
@@ -299,6 +343,10 @@ async function saveAdded() {
 
 }
 
+/**
+ * modal template 
+ */
+
 let modalView = `<div class="modal fade" id="confirmDeleteBookModal" tabindex="-1" role="dialog"
 aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -323,6 +371,11 @@ aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     </div>
 </div>
 </div>`
+
+/**
+ * delete selected book Id
+ * @param {number} bookId book id to be deleted
+ */
 
 function deleteBook(bookId) {
   outlet.innerHTML = modalView + table;
@@ -355,9 +408,13 @@ function deleteBook(bookId) {
 }
 
 
+/**
+ * search the library using the book titile 
+ * @param {object} event event object
+ */
 
-
-function searchWithTitle() {
+function searchWithTitle(event) {
+  event.preventDefault();
 
   let resultBook = [];
   let bookTitle = document.querySelector('#searchValue').value;
@@ -368,6 +425,10 @@ function searchWithTitle() {
   }
   tabeleDraw(resultBook);
 }
+
+/**
+ * listener to pop state from history API
+ */
 window.addEventListener("popstate", function () {
   if (history.state === 'fetchAboutText') {
     fetchAboutText();
@@ -378,6 +439,6 @@ window.addEventListener("popstate", function () {
 
     fetchBook();
   }
-  //  else location.reload;
+  // else location.reload;
 })
 
