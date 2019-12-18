@@ -1,3 +1,5 @@
+
+<H5>Our Services</H5>
 The eLibrary® database has been completely re-imagined, with a redesigned experience that more efficiently guides novice 
 researchers to identify their research topic and find authoritative information to support their research claim. 
 Presented on the award-winning ProQuest platform, eLibrary offers two methods of access: a custom Guided Research application, 
