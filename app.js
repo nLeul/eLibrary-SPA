@@ -1,6 +1,11 @@
-
-const aboutNode = document.getElementById('aboutID');
-aboutNode.addEventListener('click', fetchAboutText);
+ document.getElementById('aboutID').addEventListener('click',
+  function (event) {
+    history.pushState('fetchAboutText', 'null', '/About')
+    event.preventDefault()
+    fetchAboutText()
+   
+  }
+);
 const outlet = document.getElementById("outlet");
 
 let addDisplay = `<h2><span id="pbtdisplay" class="btn btn-success" 
@@ -20,9 +25,15 @@ function fetchAboutText() {
 
     })
 }
-
-const virtualTour = document.getElementById('virtualID');
-virtualTour.addEventListener('click', fetchVirtualTour);
+ document.getElementById('virtualID').addEventListener('click',
+  function (event) {
+    history.pushState('fetchVirtualTour', '', '/Virtual Tour')
+    fetchVirtualTour();
+    event.preventDefault();
+    
+  
+  }
+);
 
 function fetchVirtualTour() {
   let image = `<img src="./image/panoramic.png" alt="library virtual tour" ">`
@@ -39,8 +50,13 @@ function fetchVirtualTour() {
 
 // fetch book
 let myBook = [];
-const booksNode = document.getElementById('booksID');
-booksNode.addEventListener('click', fetchBook);
+document.getElementById('booksID').addEventListener('click',
+  function (event) {
+    history.pushState('fetchBook', 'null', '/Books')
+    fetchBook();
+    event.preventDefault();
+  }
+);
 let table = '';
 async function fetchBook() {
   const resp = await fetch("https://elibraryrestapi.herokuapp.com/elibrary/api/book/list");
@@ -48,7 +64,7 @@ async function fetchBook() {
   tabeleDraw(data)
 }
 function tabeleDraw(data) {
-  myBook.push(data);
+  myBook = data;
   table = ` 
   <h2><span id="deleteDisp" class="btn btn-success" 
 style="display: none; margin-left: 400px; margin-right: 400px;" >DELETED Successfully</span> </h2>
@@ -114,7 +130,7 @@ function fetchIndex() {
 
     })
 }
-// fetchIndex();
+fetchIndex();
 
 // edit book page template 
 let editBook = `  <div class="container">
@@ -153,7 +169,7 @@ style="display: none; margin-left: 400px; margin-right: 400px;" >Updated Success
 </div>
 </fieldset>
 <div id="button" style="margin-left: 1020px;">
-<input id="saveBook" onclick="editBookAdded()" type="button" class="btn btn-primary" value="UpdateBook">
+<input id="saveBook" onclick="editBookAdded()" type="button" class="btn btn-primary" value="Update Book">
     
 </div>`
 
@@ -191,7 +207,7 @@ let addBook = `  <div class="container">
 </div>
 </fieldset>
 <div id="button" style="margin-left: 1020px;">
-<input id="saveBook" onclick='saveAdded()' type="button" class="btn btn-primary" value="save">
+<input id="saveBook" onclick='saveAdded()' type="button" class="btn btn-primary" value="Add Book">
     
 </div>`
 
@@ -276,7 +292,10 @@ async function saveAdded() {
     addBookDis.style.display = 'block';
 
   })
-  fetchBook() // alert("post succesful");
+  setTimeout(() => {
+    fetchBook();
+  }, 3000)
+
 
 }
 
@@ -336,18 +355,29 @@ function deleteBook(bookId) {
 }
 
 
-document.querySelector('#searchID').addEventListener("click", searchWithTitle);
+
 
 function searchWithTitle() {
 
   let resultBook = [];
   let bookTitle = document.querySelector('#searchValue').value;
   for (let book of myBook) {
-    if (book.title === bookTitle) {
-      resultBook.push(book.title);
-
+    if (book.title.includes(bookTitle)) {
+      resultBook.push(book);
     }
   }
-  console.log(resultBook)
-  // tabeleDraw(resultBook);
+  tabeleDraw(resultBook);
 }
+window.addEventListener("popstate", function () {
+  if (history.state === 'fetchAboutText') {
+    fetchAboutText();
+  } else if (history.state === 'fetchVirtualTour') {
+    fetchVirtualTour();
+
+  } else if (history.state === 'fetchBook') {
+
+    fetchBook();
+  }
+  //  else location.reload;
+})
+
